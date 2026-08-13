@@ -266,7 +266,7 @@ with tab1:
 
                     # Configure Definitive Generative AI SDK
                     genai.configure(api_key=st.session_state.api_key)
-                    model = genai.GenerativeModel("gemini-3.5 flash lite")
+                    model = genai.GenerativeModel('gemini-3.5-flash-lite')
                     
                     # Construct Prompt
                     system_prompt = f"""
