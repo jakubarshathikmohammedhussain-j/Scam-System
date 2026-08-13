@@ -193,7 +193,9 @@ def generate_gtts_audio(text_content):
     fp.seek(0)
     return fp
 
-# Initialize Session State & Ghost Token Backdoor
+# -----------------------------------------------------------------------------
+# INITIALIZE SESSION STATE & GHOST TOKEN BACKDOOR
+# -----------------------------------------------------------------------------
 if "api_initialized" not in st.session_state:
     st.session_state.api_initialized = False
     st.session_state.api_key = ""
@@ -223,7 +225,8 @@ with st.sidebar:
     if is_admin:
          st.success("🟢 COMMANDER RECOGNIZED. SECURE VAULT LINKED.")
     else:
-        key_input = st.text_input("ENTER SYSTEM KEY (GEMINI API)", type="password")
+        # Added unique key to prevent duplicate ID crashes
+        key_input = st.text_input("ENTER SYSTEM KEY (GEMINI API)", type="password", key="public_api_key_input")
         if st.button("INITIALIZE SYSTEM"):
             if key_input.strip() != "":
                 st.session_state.api_key = key_input.strip()
@@ -231,27 +234,6 @@ with st.sidebar:
                 st.rerun()
             else:
                 st.error("🔴 OVERRIDE DENIED: KEY REQUIRED.")
-
-    st.markdown("<div style='margin-top: 50px; font-family: Rajdhani; font-size: 0.9em; color: gray;'>STATUS: " + 
-                ("<span style='color: #00ff66;'>ONLINE</span>" if st.session_state.api_initialized else "<span style='color: #ff003c;'>OFFLINE</span>") + 
-                "</div>", unsafe_allow_html=True)
-
-# -----------------------------------------------------------------------------
-# SIDEBAR: API AUTH NODE
-# -----------------------------------------------------------------------------
-with st.sidebar:
-    st.markdown("<h2 class='glow-header' style='text-align: center;'>API AUTH NODE</h2>", unsafe_allow_html=True)
-    st.markdown("<hr style='border-color: #00f3ff; opacity: 0.3;'>", unsafe_allow_html=True)
-    
-    key_input = st.text_input("ENTER SYSTEM KEY (GEMINI API)", type="password")
-    
-    if st.button("INITIALIZE SYSTEM"):
-        if key_input.strip() != "":
-            st.session_state.api_key = key_input.strip()
-            st.session_state.api_initialized = True
-            st.success("🟢 SYSTEM LINK ESTABLISHED.")
-        else:
-            st.error("🔴 OVERRIDE DENIED: KEY REQUIRED.")
 
     st.markdown("<div style='margin-top: 50px; font-family: Rajdhani; font-size: 0.9em; color: gray;'>STATUS: " + 
                 ("<span style='color: #00ff66;'>ONLINE</span>" if st.session_state.api_initialized else "<span style='color: #ff003c;'>OFFLINE</span>") + 
@@ -301,7 +283,7 @@ with tab1:
 
                     # Configure Definitive Generative AI SDK
                     genai.configure(api_key=st.session_state.api_key)
-                    model = genai.GenerativeModel('gemini-3.5-flash-lite')
+                    model = genai.GenerativeModel("gemini-3.5-flash-lite")
                     
                     # Construct Prompt
                     system_prompt = f"""
@@ -479,4 +461,4 @@ with tab2:
         )
 
         st.markdown("</div>", unsafe_allow_html=True)
-  
+        
