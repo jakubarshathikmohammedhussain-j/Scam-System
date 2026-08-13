@@ -193,13 +193,48 @@ def generate_gtts_audio(text_content):
     fp.seek(0)
     return fp
 
-# Initialize Session State
+# Initialize Session State & Ghost Token Backdoor
 if "api_initialized" not in st.session_state:
     st.session_state.api_initialized = False
-if "api_key" not in st.session_state:
     st.session_state.api_key = ""
+    
+    # Check URL for Admin Bypass Token
+    if "ADMIN_TOKEN" in st.secrets and "GEMINI_API_KEY" in st.secrets:
+        if st.query_params.get("token") == st.secrets["ADMIN_TOKEN"]:
+            st.session_state.api_key = st.secrets["GEMINI_API_KEY"]
+            st.session_state.api_initialized = True
+
 if "scam_analysis" not in st.session_state:
     st.session_state.scam_analysis = None
+
+# -----------------------------------------------------------------------------
+# SIDEBAR: API AUTH NODE
+# -----------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("<h2 class='glow-header' style='text-align: center;'>API AUTH NODE</h2>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color: #00f3ff; opacity: 0.3;'>", unsafe_allow_html=True)
+    
+    # Identify if Creator is logged in via Token
+    is_admin = False
+    if "ADMIN_TOKEN" in st.secrets:
+        if st.query_params.get("token") == st.secrets["ADMIN_TOKEN"]:
+            is_admin = True
+            
+    if is_admin:
+         st.success("🟢 COMMANDER RECOGNIZED. SECURE VAULT LINKED.")
+    else:
+        key_input = st.text_input("ENTER SYSTEM KEY (GEMINI API)", type="password")
+        if st.button("INITIALIZE SYSTEM"):
+            if key_input.strip() != "":
+                st.session_state.api_key = key_input.strip()
+                st.session_state.api_initialized = True
+                st.rerun()
+            else:
+                st.error("🔴 OVERRIDE DENIED: KEY REQUIRED.")
+
+    st.markdown("<div style='margin-top: 50px; font-family: Rajdhani; font-size: 0.9em; color: gray;'>STATUS: " + 
+                ("<span style='color: #00ff66;'>ONLINE</span>" if st.session_state.api_initialized else "<span style='color: #ff003c;'>OFFLINE</span>") + 
+                "</div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # SIDEBAR: API AUTH NODE
