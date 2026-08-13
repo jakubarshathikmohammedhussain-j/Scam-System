@@ -11,7 +11,7 @@ from gtts import gTTS
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="S.C.A.M. SYSTEM - HOLO EARTH",
-    page_icon="👁️‍🗨️",
+    page_icon="https://cdn-icons-png.flaticon.com/512/9338/9338142.png", # Cyberpunk Eye Logo URL
     layout="wide",
     initial_sidebar_state="expanded"
 )
