@@ -284,11 +284,13 @@ with tab1:
                     # Configure Definitive Generative AI SDK
                     genai.configure(api_key=st.session_state.api_key)
                     model = genai.GenerativeModel("gemini-3.5-flash-lite")
-                    
+                                
                     # Construct Prompt
                     system_prompt = f"""
                     You are a cynical, hyper-analytical Corporate CIO detecting software redundancy.
                     Analyze the following software inventory data. Identify overlapping tools, wasted spend, and consolidation opportunities.
+                    
+                    CALCULATION RULE: To calculate 'total_category_waste', sum the total cost of all tools in a category, then subtract the cost of the single primary tool you recommend keeping. 
                     
                     CRITICAL INSTRUCTION: You must respond STRICTLY with a valid JSON object matching the exact schema below. Do not include markdown formatting, backticks, or conversational text.
                     
@@ -310,12 +312,17 @@ with tab1:
                     DATA PAYLOAD:
                     {input_context}
                     """
-
-                    # Call Gemini API with Structured Output Mandate
+                    
+     
+                    # Call Gemini API with Structured Output Mandate and Zero Temperature
                     response = model.generate_content(
                         system_prompt,
-                        generation_config={"response_mime_type": "application/json"}
+                        generation_config={
+                            "response_mime_type": "application/json",
+                            "temperature": 0.0
+                        }
                     )
+                    
                     
                     # Parse and Store Response
                     result_json = json.loads(response.text)
